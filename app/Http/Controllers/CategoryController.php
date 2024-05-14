@@ -6,6 +6,8 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Category;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
@@ -27,7 +29,16 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'name' => [ 'required', 'string', 'max:50', Rule::unique('categories') ],
+                'description' => [ 'max:255' ]
+            ]);
+            $category = Category::create($request->all());
+            return ApiResponse::success('Category successfully created', 200, $category);
+        } catch (ValidationException $exception) {
+            return ApiResponse::error('Validation error', 422);
+        }
     }
 
     /**
