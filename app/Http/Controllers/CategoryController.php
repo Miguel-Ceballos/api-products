@@ -58,9 +58,21 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $category = Category::findOrFail($id);
+            $request->validate([
+                'name' => [ 'required', 'string', 'max:50', Rule::unique('categories')->ignore($category) ],
+                'description' => [ 'max:255' ]
+            ]);
+            $category->update($request->all());
+            return ApiResponse::success('Category successfully updated.', 200, $category);
+        } catch (ModelNotFoundException $exception) {
+            return ApiResponse::error('Category not found.', 404);
+        } catch (Exception $exception) {
+            return ApiResponse::error('Error: ' . $exception->getMessage(), $exception->getCode());
+        }
     }
 
     /**
