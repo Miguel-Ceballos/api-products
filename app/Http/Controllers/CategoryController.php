@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Responses\ApiResponse;
 use App\Models\Category;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -44,9 +45,14 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show($id)
     {
-        //
+        try {
+            $category = Category::findOrFail($id);
+            return ApiResponse::success('Category returned successfully.', 200, $category);
+        } catch (ModelNotFoundException) {
+            return ApiResponse::error('Category not found.', 404);
+        }
     }
 
     /**
