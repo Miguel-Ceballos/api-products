@@ -58,9 +58,21 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Brand $brand)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $brand = Brand::findOrFail($id);
+            $request->validate([
+                'name' => [ 'required', 'string', 'max:50', Rule::unique('brands')->ignore($brand) ],
+                'description' => [ 'max:255' ]
+            ]);
+            $brand->update($request->all());
+            return ApiResponse::success('Brand successfully updated.', 200, $brand);
+        } catch (ModelNotFoundException $exception) {
+            return ApiResponse::error('Brand not found.', 404);
+        } catch (Exception $exception) {
+            return ApiResponse::error('Error: ' . $exception->getMessage(), $exception->getCode());
+        }
     }
 
     /**
