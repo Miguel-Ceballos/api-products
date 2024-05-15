@@ -78,8 +78,14 @@ class BrandController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Brand $brand)
+    public function destroy($id)
     {
-        //
+        try {
+            $brand = Brand::findOrFail($id);
+            $brand->delete();
+            return ApiResponse::success('Brand successfully deleted.', 200);
+        }catch (ModelNotFoundException $exception) {
+            return ApiResponse::error('Brand not found.', 404);
+        }
     }
 }
