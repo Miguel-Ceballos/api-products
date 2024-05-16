@@ -19,6 +19,7 @@ class ProductController extends Controller
     {
         try {
             $products = Product::all();
+//            $products = Product::with('brand', 'category')->get();
             return ApiResponse::success('Products successfully returned.', 200, $products);
         } catch (Exception $exception) {
             return ApiResponse::error('Error getting information.', 500);
@@ -53,7 +54,7 @@ class ProductController extends Controller
     public function show($id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = Product::with('brand', 'category')->findOrFail($id);
             return ApiResponse::success('Product returned successfully.', 200, $product);
         } catch (ModelNotFoundException $exception) {
             return ApiResponse::error('Product not found.', 404);
