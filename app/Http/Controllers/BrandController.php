@@ -88,4 +88,14 @@ class BrandController extends Controller
             return ApiResponse::error('Brand not found.', 404);
         }
     }
+
+    public function brandProducts($id)
+    {
+        try {
+            $brand = Brand::with('products')->findOrFail($id);
+            return ApiResponse::success('Brand returned successfully.', 200, $brand);
+        }catch (ModelNotFoundException $exception){
+            return ApiResponse::error('Brand not found.', 404);
+        }
+    }
 }
