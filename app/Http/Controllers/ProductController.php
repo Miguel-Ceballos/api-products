@@ -44,7 +44,7 @@ class ProductController extends Controller
             return ApiResponse::success('Product created successfully', 201, $product);
         } catch (ValidationException $exception) {
             $errors = $exception->validator->errors()->toArray();
-            return ApiResponse::error('Validation error: ' . $errors, 422);
+            return ApiResponse::error('Validation error: ', 422, $errors);
         }
     }
 
